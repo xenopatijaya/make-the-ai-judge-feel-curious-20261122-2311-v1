@@ -30,6 +30,9 @@ def _write_atomic(target: str, text: str) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="") as handle:
             handle.write(text)
+        # mkstemp makes 0600; the grader reads the output as another
+        # user, so the finished file must be world-readable.
+        os.chmod(tmp_path, 0o644)
         os.replace(tmp_path, target)
     except BaseException:
         try:
